@@ -1,6 +1,5 @@
 package br.uece.metrocard.domain.entity;
 
-import br.uece.metrocard.domain.dto.CardDto;
 import lombok.Getter;
 import lombok.Setter;
 

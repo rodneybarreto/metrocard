@@ -5,7 +5,6 @@ import br.uece.metrocard.domain.entity.Account;
 import br.uece.metrocard.domain.entity.Card;
 import br.uece.metrocard.repository.AccountRepository;
 import br.uece.metrocard.repository.CardRepository;
-import br.uece.metrocard.service.CardService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
