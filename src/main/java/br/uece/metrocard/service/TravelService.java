@@ -35,10 +35,9 @@ public class TravelService {
     }
 
     private Card getCard(TravelDto travelDto) {
-        Card card = cardRepository
+        return cardRepository
                 .findById(travelDto.getCardId())
                 .orElseThrow(() -> new RuntimeException("Viagem não autorizada: cartão não encontrado."));
-        return card;
     }
 
 }
