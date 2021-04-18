@@ -27,6 +27,9 @@ public class Account {
     }
 
     public void debit(Double value) {
+        if (this.balance < value) {
+            throw new RuntimeException("Saldo insuficiente na conta.");
+        }
         this.balance -= value;
     }
 
