@@ -4,22 +4,29 @@ import br.uece.metrocard.domain.dto.TravelDto;
 import br.uece.metrocard.domain.entity.Card;
 import br.uece.metrocard.domain.entity.Travel;
 import br.uece.metrocard.domain.enums.Tariff;
+import br.uece.metrocard.repository.CardRepository;
 import br.uece.metrocard.repository.TravelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class TravelService {
 
     private TravelRepository travelRepository;
+    private CardRepository cardRepository;
 
     @Autowired
-    public TravelService(TravelRepository travelRepository) {
+    public TravelService(TravelRepository travelRepository, CardRepository cardRepository) {
         this.travelRepository = travelRepository;
+        this.cardRepository = cardRepository;
     }
 
-    public TravelDto create(TravelDto travelDto) {
-        Card card = new Card(travelDto.getCardId());
+    public TravelDto create(TravelDto travelDto) throws Exception {
+        Card card = cardRepository
+                .findById(travelDto.getCardId())
+                .orElseThrow(() -> new RuntimeException("Viagem não autorizada: cartão não encontrado."));
 
         Travel travel = new Travel();
         travel.setCard(card);
