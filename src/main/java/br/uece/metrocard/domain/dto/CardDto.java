@@ -17,7 +17,7 @@ public class CardDto {
 
     public CardDto(Card card) {
         this.id = card.getId();
-        this.accountId = card.getAccountId();
+        this.accountId = card.getAccount().getId();
         this.zoneType = card.getZoneType();
     }
 

@@ -16,8 +16,8 @@ public class Card {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "account_id")
-    private Integer accountId;
+    @OneToOne
+    private Account account;
 
     @Column(name = "zone_type")
     private String zoneType;
@@ -27,11 +27,6 @@ public class Card {
 
     public Card(Integer id) {
         this.id = id;
-    }
-
-    public Card(CardDto cardDto) {
-        this.accountId = cardDto.getAccountId();
-        this.zoneType = cardDto.getZoneType();
     }
 
 }

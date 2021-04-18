@@ -19,6 +19,13 @@ public class Account {
 
     private Double balance; // saldo
 
+    public Account() {
+    }
+
+    public Account(Integer id) {
+        this.id = id;
+    }
+
     public void debit(Double value) {
         this.balance -= value;
     }
