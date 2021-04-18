@@ -37,8 +37,7 @@ public class TravelServiceTest {
         travelReq.setTariff("ZONE_A_UNIC");
         travelReq.setCardId(1);
 
-        Optional<Card> optional = Optional.of(new Card(1));
-        Card card = optional.get();
+        Card card = new Card(travelReq.getCardId());
 
         Travel travel = new Travel();
         travel.setId(1);
