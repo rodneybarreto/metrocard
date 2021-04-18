@@ -24,9 +24,7 @@ public class TravelService {
     }
 
     public TravelDto create(TravelDto travelDto) throws Exception {
-        Card card = cardRepository
-                .findById(travelDto.getCardId())
-                .orElseThrow(() -> new RuntimeException("Viagem não autorizada: cartão não encontrado."));
+        Card card = getCard(travelDto);
 
         Travel travel = new Travel();
         travel.setCard(card);
@@ -34,6 +32,13 @@ public class TravelService {
 
         Travel travelSaved = travelRepository.save(travel);
         return new TravelDto(travelSaved);
+    }
+
+    private Card getCard(TravelDto travelDto) {
+        Card card = cardRepository
+                .findById(travelDto.getCardId())
+                .orElseThrow(() -> new RuntimeException("Viagem não autorizada: cartão não encontrado."));
+        return card;
     }
 
 }
