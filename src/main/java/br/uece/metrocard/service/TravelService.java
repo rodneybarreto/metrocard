@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.stream.Stream;
 
 @Service
@@ -49,9 +50,24 @@ public class TravelService {
                 throw new RuntimeException("Viagem não autorizada: a zona B não é permitida para este cartão.");
             }
 
-            if (tariff.toString().equals(ZONE_A_UNIC)) {
-                Account account = card.getAccount();
-                account.debit(tariff.getValue());
+            Account account = card.getAccount();
+            switch (tariff.toString()) {
+                case ZONE_A_UNIC:
+                    account.debit(tariff.getValue());
+                    break;
+                case ZONE_A_DAY:
+                    Collection<Travel> travelsToday = travelRepository
+                            .findAllByTariffAndTravelDateToday(tariff.toString());
+
+                    if (travelsToday.isEmpty()) {
+                        account.debit(tariff.getValue());
+                    }
+                    break;
+                case ZONE_A_WEEK:
+                    break;
+                case ZONE_A_MONTH:
+                    break;
+                default:
             }
 
         }
