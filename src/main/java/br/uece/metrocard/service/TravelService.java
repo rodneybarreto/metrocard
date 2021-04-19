@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.stream.Stream;
 
 @Service
@@ -20,6 +21,9 @@ public class TravelService {
     private static final String ZONE_A = "A";
     private static final String ZONE_B = "B";
     private static final String ZONE_A_UNIC = "ZONE_A_UNIC";
+    private static final String ZONE_A_DAY = "ZONE_A_DAY";
+    private static final String ZONE_A_WEEK = "ZONE_A_WEEK";
+    private static final String ZONE_A_MONTH = "ZONE_A_MONTH";
 
     private final TravelRepository travelRepository;
     private final CardRepository cardRepository;
@@ -55,6 +59,7 @@ public class TravelService {
         Travel travel = new Travel();
         travel.setCard(card);
         travel.setTariff(Tariff.valueOf(travelDto.getTariff()));
+        travel.setTravelDate(LocalDate.now());
 
         Travel travelSaved = travelRepository.save(travel);
         return new TravelDto(travelSaved);
