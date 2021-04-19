@@ -1,6 +1,7 @@
 package br.uece.metrocard.service;
 
 import br.uece.metrocard.domain.dto.TravelDto;
+import br.uece.metrocard.domain.entity.Account;
 import br.uece.metrocard.domain.entity.Card;
 import br.uece.metrocard.domain.entity.Travel;
 import br.uece.metrocard.domain.enums.Tariff;
@@ -37,7 +38,14 @@ public class TravelServiceTest {
         travelReq.setTariff("ZONE_A_UNIC");
         travelReq.setCardId(1);
 
+        Account account = new Account();
+        account.setId(1);
+        account.setOwner("Bob");
+        account.setBalance(6.0);
+
         Card card = new Card(travelReq.getCardId());
+        card.setZoneType("A");
+        card.setAccount(account);
 
         Travel travel = new Travel();
         travel.setId(1);
