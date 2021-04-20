@@ -8,6 +8,8 @@ import br.uece.metrocard.repository.CardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @Service
 public class CardService {
 
@@ -26,6 +28,7 @@ public class CardService {
         Card card = new Card();
         card.setAccount(account);
         card.setZoneType(cardDto.getZoneType());
+        card.setAcquireDate(LocalDate.now());
 
         Card cardSaved = cardRepository.save(card);
         return new CardDto(cardSaved);

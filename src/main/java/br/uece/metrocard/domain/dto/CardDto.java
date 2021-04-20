@@ -4,6 +4,8 @@ import br.uece.metrocard.domain.entity.Card;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 public class CardDto {
@@ -11,6 +13,7 @@ public class CardDto {
     private Integer id;
     private Integer accountId;
     private String zoneType;
+    private LocalDate acquireDate;
 
     public CardDto() {
     }
@@ -19,6 +22,7 @@ public class CardDto {
         this.id = card.getId();
         this.accountId = card.getAccount().getId();
         this.zoneType = card.getZoneType();
+        this.acquireDate = card.getAcquireDate();
     }
 
 }
