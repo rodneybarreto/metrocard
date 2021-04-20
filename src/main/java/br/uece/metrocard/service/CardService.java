@@ -13,8 +13,8 @@ import java.time.LocalDate;
 @Service
 public class CardService {
 
-    private CardRepository cardRepository;
-    private AccountRepository accountRepository;
+    private final CardRepository cardRepository;
+    private final AccountRepository accountRepository;
 
     @Autowired
     public CardService(CardRepository cardRepository, AccountRepository accountRepository) {

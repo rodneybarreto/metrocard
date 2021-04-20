@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,7 +30,7 @@ public class CardServiceTest {
     @InjectMocks
     private CardService cardService;
 
-    @DisplayName("Deve cadastrar um cartao")
+    @DisplayName("Cadastra um cartão")
     @Test
     public void create() throws Exception {
         CardDto cardReq = new CardDto();
@@ -37,11 +38,14 @@ public class CardServiceTest {
         cardReq.setZoneType("A");
 
         Account account = new Account(cardReq.getAccountId());
+        account.setOwner("Teddy");
+        account.setBalance(126.0);
 
         Card card = new Card();
         card.setId(1);
         card.setAccount(account);
         card.setZoneType("A");
+        card.setAcquireDate(LocalDate.now());
 
         when(accountRepository.findById(any(Integer.class))).thenReturn(Optional.of(account));
         when(cardRepository.save(any(Card.class))).thenReturn(card);
