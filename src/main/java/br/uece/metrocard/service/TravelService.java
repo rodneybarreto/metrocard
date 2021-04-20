@@ -51,10 +51,8 @@ public class TravelService {
         LocalDate expirationDate = LocalDate.now();
         LocalDate travelDate = LocalDate.now();
 
-        if (card.getZoneType().equals(ZONE_A)) {
-            if (tariff.getZone().equals(ZONE_B)) {
-                throw new RuntimeException("Viagem não autorizada: a zona B não é permitida para este cartão.");
-            }
+        if (card.getZoneType().equals(ZONE_A) && tariff.getZone().equals(ZONE_B)) {
+            throw new RuntimeException("Viagem não autorizada: a zona B não é permitida para este cartão.");
         }
 
         switch (tariff.toString()) {
@@ -75,8 +73,7 @@ public class TravelService {
                     account.debit(tariff.getValue());
                 }
                 else {
-                    Collection<Travel> travelsWeek = travelRepository
-                            .findAllByTariffAndTravelDateOnPeriod(tariff.toString(), card.getAcquireDate(), expirationDate);
+                    Collection<Travel> travelsWeek = getTravelsOnPeriod(card, tariff, expirationDate);
                     if (travelsWeek.isEmpty()) {
                         account.debit(tariff.getValue());
                     }
@@ -89,9 +86,8 @@ public class TravelService {
                     account.debit(tariff.getValue());
                 }
                 else {
-                    Collection<Travel> travelsWeek = travelRepository
-                            .findAllByTariffAndTravelDateOnPeriod(tariff.toString(), card.getAcquireDate(), expirationDate);
-                    if (travelsWeek.isEmpty()) {
+                    Collection<Travel> travelsMonth = getTravelsOnPeriod(card, tariff, expirationDate);
+                    if (travelsMonth.isEmpty()) {
                         account.debit(tariff.getValue());
                     }
                 }
@@ -119,6 +115,11 @@ public class TravelService {
                 .filter(t -> t.toString().equals(travelDto.getTariff()))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Viagem não autorizada: a zona informada não foi encontrada."));
+    }
+
+    private Collection<Travel> getTravelsOnPeriod(Card card, Tariff tariff, LocalDate expirationDate) {
+        return travelRepository
+                .findAllByTariffAndTravelDateOnPeriod(tariff.toString(), card.getAcquireDate(), expirationDate);
     }
 
 }
