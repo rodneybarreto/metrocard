@@ -26,4 +26,8 @@ public class Travel {
     @Column(name = "travel_date")
     private LocalDate travelDate;
 
+    private Boolean checkin;
+
+    private Boolean checkout;
+
 }

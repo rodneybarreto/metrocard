@@ -12,8 +12,11 @@ import java.util.Collection;
 @Repository
 public interface TravelRepository extends JpaRepository<Travel, Integer> {
 
-    @Query(value = "SELECT * FROM travels WHERE tariff = :pTariff AND travel_date = TODAY", nativeQuery = true)
-    Collection<Travel> findAllByTariffAndTravelDateToday(@Param("pTariff") String tariff);
+    @Query(value = "SELECT * FROM travels WHERE tariff = :pTariff AND travel_date = :pTravelDate", nativeQuery = true)
+    Collection<Travel> findAllByTariffAndTravelDate(
+            @Param("pTariff") String tariff,
+            @Param("pTravelDate") LocalDate travelDate
+    );
 
     @Query(
             value = "SELECT * FROM travels "+

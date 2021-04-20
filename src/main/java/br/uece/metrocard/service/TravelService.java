@@ -5,7 +5,6 @@ import br.uece.metrocard.domain.entity.Account;
 import br.uece.metrocard.domain.entity.Card;
 import br.uece.metrocard.domain.entity.Travel;
 import br.uece.metrocard.domain.enums.Tariff;
-import br.uece.metrocard.repository.AccountRepository;
 import br.uece.metrocard.repository.CardRepository;
 import br.uece.metrocard.repository.TravelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,15 +31,11 @@ public class TravelService {
 
     private final TravelRepository travelRepository;
     private final CardRepository cardRepository;
-    private final AccountRepository accountRepository;
 
     @Autowired
-    public TravelService(TravelRepository travelRepository,
-                         CardRepository cardRepository,
-                         AccountRepository accountRepository) {
+    public TravelService(TravelRepository travelRepository, CardRepository cardRepository) {
         this.travelRepository = travelRepository;
         this.cardRepository = cardRepository;
-        this.accountRepository = accountRepository;
     }
 
     @Transactional
@@ -58,14 +53,27 @@ public class TravelService {
         switch (tariff.toString()) {
             case ZONE_A_UNIC: case ZONE_B_UNIC:
                 account.debit(tariff.getValue());
-                break;
-            case ZONE_A_DAY: case ZONE_B_DAY:
-                Collection<Travel> travelsToday = travelRepository
-                        .findAllByTariffAndTravelDateToday(tariff.toString());
-                if (travelsToday.isEmpty()) {
-                    account.debit(tariff.getValue());
+
+                Collection<Travel> travelsUnic = travelRepository
+                        .findAllByTariffAndTravelDate(tariff.toString(), travelDate);
+
+                if (!travelsUnic.isEmpty()) {
+                    travelsUnic.stream().forEach(t -> t.setCheckout(true));
+                    travelRepository.saveAll(travelsUnic);
                 }
                 break;
+
+            case ZONE_A_DAY: case ZONE_B_DAY:
+                Collection<Travel> travelsToday = travelRepository
+                        .findAllByTariffAndTravelDate(tariff.toString(), travelDate);
+                if (travelsToday.isEmpty()) {
+                    account.debit(tariff.getValue());
+                } else {
+                    travelsToday.stream().forEach(t -> t.setCheckout(true));
+                    travelRepository.saveAll(travelsToday);
+                }
+                break;
+
             case ZONE_A_WEEK: case ZONE_B_WEEK:
                 expirationDate = card.getAcquireDate().plusDays(7);
                 if (travelDate.isAfter(expirationDate)) {
@@ -76,9 +84,13 @@ public class TravelService {
                     Collection<Travel> travelsWeek = getTravelsOnPeriod(card, tariff, expirationDate);
                     if (travelsWeek.isEmpty()) {
                         account.debit(tariff.getValue());
+                    } else {
+                        travelsWeek.stream().forEach(t -> t.setCheckout(true));
+                        travelRepository.saveAll(travelsWeek);
                     }
                 }
                 break;
+
             case ZONE_A_MONTH: case ZONE_B_MONTH:
                 expirationDate = card.getAcquireDate().plusMonths(1);
                 if (travelDate.isAfter(expirationDate)) {
@@ -89,6 +101,9 @@ public class TravelService {
                     Collection<Travel> travelsMonth = getTravelsOnPeriod(card, tariff, expirationDate);
                     if (travelsMonth.isEmpty()) {
                         account.debit(tariff.getValue());
+                    } else {
+                        travelsMonth.stream().forEach(t -> t.setCheckout(true));
+                        travelRepository.saveAll(travelsMonth);
                     }
                 }
                 break;
@@ -99,6 +114,8 @@ public class TravelService {
         travel.setCard(card);
         travel.setTariff(Tariff.valueOf(travelDto.getTariff()));
         travel.setTravelDate(travelDate);
+        travel.setCheckin(true);
+        travel.setCheckout(false);
 
         Travel travelSaved = travelRepository.save(travel);
         return new TravelDto(travelSaved);
