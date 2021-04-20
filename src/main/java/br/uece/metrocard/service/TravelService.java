@@ -25,6 +25,10 @@ public class TravelService {
     private static final String ZONE_A_DAY = "ZONE_A_DAY";
     private static final String ZONE_A_WEEK = "ZONE_A_WEEK";
     private static final String ZONE_A_MONTH = "ZONE_A_MONTH";
+    private static final String ZONE_B_UNIC = "ZONE_B_UNIC";
+    private static final String ZONE_B_DAY = "ZONE_B_DAY";
+    private static final String ZONE_B_WEEK = "ZONE_B_WEEK";
+    private static final String ZONE_B_MONTH = "ZONE_B_MONTH";
 
     private final TravelRepository travelRepository;
     private final CardRepository cardRepository;
@@ -48,53 +52,51 @@ public class TravelService {
         LocalDate travelDate = LocalDate.now();
 
         if (card.getZoneType().equals(ZONE_A)) {
-
             if (tariff.getZone().equals(ZONE_B)) {
                 throw new RuntimeException("Viagem não autorizada: a zona B não é permitida para este cartão.");
             }
+        }
 
-            switch (tariff.toString()) {
-                case ZONE_A_UNIC:
+        switch (tariff.toString()) {
+            case ZONE_A_UNIC: case ZONE_B_UNIC:
+                account.debit(tariff.getValue());
+                break;
+            case ZONE_A_DAY: case ZONE_B_DAY:
+                Collection<Travel> travelsToday = travelRepository
+                        .findAllByTariffAndTravelDateToday(tariff.toString());
+                if (travelsToday.isEmpty()) {
                     account.debit(tariff.getValue());
-                    break;
-                case ZONE_A_DAY:
-                    Collection<Travel> travelsToday = travelRepository
-                            .findAllByTariffAndTravelDateToday(tariff.toString());
-                    if (travelsToday.isEmpty()) {
+                }
+                break;
+            case ZONE_A_WEEK: case ZONE_B_WEEK:
+                expirationDate = card.getAcquireDate().plusDays(7);
+                if (travelDate.isAfter(expirationDate)) {
+                    card.setAcquireDate(travelDate);
+                    account.debit(tariff.getValue());
+                }
+                else {
+                    Collection<Travel> travelsWeek = travelRepository
+                            .findAllByTariffAndTravelDateOnPeriod(tariff.toString(), card.getAcquireDate(), expirationDate);
+                    if (travelsWeek.isEmpty()) {
                         account.debit(tariff.getValue());
                     }
-                    break;
-                case ZONE_A_WEEK:
-                    expirationDate = card.getAcquireDate().plusDays(7);
-                    if (travelDate.isAfter(expirationDate)) {
-                        card.setAcquireDate(travelDate);
+                }
+                break;
+            case ZONE_A_MONTH: case ZONE_B_MONTH:
+                expirationDate = card.getAcquireDate().plusMonths(1);
+                if (travelDate.isAfter(expirationDate)) {
+                    card.setAcquireDate(travelDate);
+                    account.debit(tariff.getValue());
+                }
+                else {
+                    Collection<Travel> travelsWeek = travelRepository
+                            .findAllByTariffAndTravelDateOnPeriod(tariff.toString(), card.getAcquireDate(), expirationDate);
+                    if (travelsWeek.isEmpty()) {
                         account.debit(tariff.getValue());
                     }
-                    else {
-                        Collection<Travel> travelsWeek = travelRepository
-                                .findAllByTariffAndTravelDateOnPeriod(tariff.toString(), card.getAcquireDate(), expirationDate);
-                        if (travelsWeek.isEmpty()) {
-                            account.debit(tariff.getValue());
-                        }
-                    }
-                    break;
-                case ZONE_A_MONTH:
-                    expirationDate = card.getAcquireDate().plusMonths(1);
-                    if (travelDate.isAfter(expirationDate)) {
-                        card.setAcquireDate(travelDate);
-                        account.debit(tariff.getValue());
-                    }
-                    else {
-                        Collection<Travel> travelsWeek = travelRepository
-                                .findAllByTariffAndTravelDateOnPeriod(tariff.toString(), card.getAcquireDate(), expirationDate);
-                        if (travelsWeek.isEmpty()) {
-                            account.debit(tariff.getValue());
-                        }
-                    }
-                    break;
-                default:
-            }
-
+                }
+                break;
+            default:
         }
 
         Travel travel = new Travel();
