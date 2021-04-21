@@ -32,7 +32,7 @@ public class CardServiceTest {
 
     @DisplayName("Cadastra um cartão")
     @Test
-    public void create() throws Exception {
+    void create() throws Exception {
         CardDto cardReq = new CardDto();
         cardReq.setAccountId(2);
         cardReq.setZoneType("A");
