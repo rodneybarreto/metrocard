@@ -136,4 +136,83 @@ public class TravelServiceTest {
         assertTrue(previouslyTravels.get(0).getCheckout());
     }
 
+    @DisplayName("Cadastra uma viagem na zona A com tarifa dia debitando da conta do usuário")
+    @Test
+    void create4() throws Exception {
+        TravelDto travelReq = new TravelDto();
+        travelReq.setTariff("ZONE_A_DAY");
+        travelReq.setCardId(1);
+
+        Account account = new Account();
+        account.setId(1);
+        account.setOwner("Bob");
+        account.setBalance(26.0);
+
+        Card card = new Card(travelReq.getCardId());
+        card.setZoneType("A");
+        card.setAccount(account);
+
+        Travel travel = new Travel();
+        travel.setId(1);
+        travel.setTariff(Tariff.ZONE_A_DAY);
+        travel.setCard(card);
+        travel.setTravelDate(LocalDate.now());
+        travel.setCheckin(true);
+        travel.setCheckout(false);
+
+        when(cardRepository.findById(any(Integer.class))).thenReturn(Optional.of(card));
+        when(travelRepository.findAllByTariffAndTravelDate(any(String.class), any(LocalDate.class)))
+                .thenReturn(Collections.emptyList());
+        when(travelRepository.save(any(Travel.class))).thenReturn(travel);
+
+        TravelDto travelRes = travelService.create(travelReq);
+        assertEquals(1, travelRes.getId());
+        assertEquals(16.0, account.getBalance());
+    }
+
+    @DisplayName("Cadastra uma viagem na zona B com tarifa dia fazendo o checkout da viagem anterior")
+    @Test
+    void create5() throws Exception {
+        TravelDto travelReq = new TravelDto();
+        travelReq.setTariff("ZONE_B_DAY");
+        travelReq.setCardId(1);
+
+        Account account = new Account();
+        account.setId(1);
+        account.setOwner("Bob");
+        account.setBalance(26.0);
+
+        Card card = new Card(travelReq.getCardId());
+        card.setZoneType("B");
+        card.setAccount(account);
+
+        Travel travel = new Travel();
+        travel.setId(1);
+        travel.setTariff(Tariff.ZONE_B_DAY);
+        travel.setCard(card);
+        travel.setTravelDate(LocalDate.now());
+        travel.setCheckin(true);
+        travel.setCheckout(false);
+
+        Travel t1 = new Travel();
+        travel.setId(1);
+        travel.setTariff(Tariff.ZONE_B_DAY);
+        travel.setCard(card);
+        travel.setTravelDate(LocalDate.now());
+        travel.setCheckin(true);
+        travel.setCheckout(false);
+
+        List<Travel> previouslyTravels = new ArrayList<>();
+        previouslyTravels.add(t1);
+
+        when(cardRepository.findById(any(Integer.class))).thenReturn(Optional.of(card));
+        when(travelRepository.findAllByTariffAndTravelDate(any(String.class), any(LocalDate.class)))
+                .thenReturn(previouslyTravels);
+        when(travelRepository.save(any(Travel.class))).thenReturn(travel);
+
+        TravelDto travelRes = travelService.create(travelReq);
+        assertEquals(26.0, account.getBalance());
+        assertTrue(previouslyTravels.get(0).getCheckout());
+    }
+
 }
