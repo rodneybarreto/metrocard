@@ -24,19 +24,19 @@ public class CardStepsTest {
 
     private Optional<Account> acoount;
 
-    @Given("que o usuário possue uma conta de número {int}")
+    @Given("que eu possuo uma conta de número {int}")
     public void given(Integer accountId) {
         acoount = accountRepository.findById(accountId);
         assertEquals(accountId, acoount.get().getId());
     }
 
-    @When("o usuário efetuar a solicitação de um novo cartão de zona {string}")
+    @When("eu efetuar a solicitação de um novo cartão de zona {string}")
     public void when(String zone) {
         List<String> zones = Arrays.asList("A", "B");
         assertEquals(zone, zones.stream().filter(z -> z.equals(zone)).findFirst().get());
     }
 
-    @Then("o usuário receberá um novo cartão da zona solicitada")
+    @Then("eu espero receber um novo cartão da zona solicitada")
     public void then() {
     }
 }
