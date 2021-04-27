@@ -1,4 +1,4 @@
-package br.uece.metrocard.cucumber;
+package br.uece.metrocard.cucumber.definitions;
 
 import br.uece.metrocard.domain.entity.Account;
 import io.cucumber.java.en.And;

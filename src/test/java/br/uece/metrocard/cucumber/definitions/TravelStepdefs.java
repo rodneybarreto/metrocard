@@ -1,4 +1,4 @@
-package br.uece.metrocard.cucumber;
+package br.uece.metrocard.cucumber.definitions;
 
 import br.uece.metrocard.domain.dto.TravelDto;
 import br.uece.metrocard.domain.entity.Account;
