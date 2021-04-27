@@ -1,8 +1,11 @@
-  Feature: Adquirir um novo cartão
-
+Feature: Adquirir um novo cartão
   Como um usuário do metrô
   Eu quero adquirir um novo cartão
   Para então viajar entre as estações
+
+  Background: Lista de contas e zonas
+    Given que o sistema possui contas previamente cadastradas
+    And que o sistema possui zonas previamente cadastradas
 
   Scenario Outline: Adquirir um novo cartão de zona
     Given que eu possuo uma conta de número <accountId>
