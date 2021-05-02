@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Metrocard Welcome</title>
+</head>
+<body>
+    <h3 th:text="'Seja bem-vindo ao Metrocard ' + ${user.username} +'!'"></h3>
+    <span>Conta Nº.: <strong th:text="${user.account.id}"></strong></span><br />
+    <span>Saldo....: <strong th:text="${user.account.balance}"></strong></span>
+</body>
+</html>
