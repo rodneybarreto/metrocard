@@ -13,6 +13,7 @@ public class TravelDto {
     private Integer id;
     private String tariff;
     private Integer cardId;
+    private Double balance;
     private LocalDate travelDate;
 
     public TravelDto() {
@@ -22,6 +23,7 @@ public class TravelDto {
         this.id = travel.getId();
         this.tariff = travel.getTariff().toString();
         this.cardId = travel.getCard().getId();
+        this.balance = travel.getCard().getAccount().getBalance();
         this.travelDate = travel.getTravelDate();
     }
 

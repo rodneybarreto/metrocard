@@ -43,7 +43,8 @@ public class TravelService {
         Card card = getCard(travelDto);
         Account account = card.getAccount();
         Tariff tariff = getTariff(travelDto);
-        LocalDate expirationDate = LocalDate.now();
+
+        LocalDate expirationDate;
         LocalDate travelDate = LocalDate.now();
 
         if (card.getZoneType().equals(ZONE_A) && tariff.getZone().equals(ZONE_B)) {

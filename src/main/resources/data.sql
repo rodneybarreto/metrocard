@@ -6,4 +6,5 @@ INSERT INTO users(username,password,account_id) VALUES('Bob','1234',1);
 INSERT INTO users(username,password,account_id) VALUES('Teddy','5678',2);
 -- cards
 INSERT INTO cards(account_id,zone_type,acquire_date) VALUES(1,'A',CURDATE());
+INSERT INTO cards(account_id,zone_type,acquire_date) VALUES(2,'B',CURDATE());
 
