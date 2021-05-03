@@ -9,26 +9,18 @@ import br.uece.metrocard.service.TravelService;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
-public class TravelStepdefs {
+public class TravelStepdefs extends CucumberContext {
 
-    @Mock
-    private TravelRepository travelRepository;
-
-    @Mock
-    private CardRepository cardRepository;
-
-    @InjectMocks
+    @Autowired
     private TravelService travelService;
 
     private Card card;
@@ -55,6 +47,9 @@ public class TravelStepdefs {
 
     @Then("eu serei informado que cartão de zona A não é permitido na zona B")
     public void euSereiInformadoQueCartaoDeZonaANaoEPermitidoNaZonaB() {
+        CardRepository cardRepository = mock(CardRepository.class);
+        TravelRepository travelRepository = mock(TravelRepository.class);
+
         when(cardRepository.findById(travelReq.getCardId())).thenReturn(Optional.of(card));
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> travelService.create(travelReq));

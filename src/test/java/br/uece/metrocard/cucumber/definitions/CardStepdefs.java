@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CardStepdefs {
+public class CardStepdefs extends CucumberContext {
 
     private List<Account> accounts;
     private List<String> zones;
